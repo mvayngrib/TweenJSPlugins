@@ -69,14 +69,15 @@ var prefix = (function () {
 })();
 
 function toString(transform) {
-	transform = $M(transform);
 	var s = "matrix3d(";
-	s += transform.e(1, 1).toFixed(10) + "," + transform.e(1, 2).toFixed(10) + "," + transform.e(1, 3) + "," + transform.e(1, 4).toFixed(10) + ",";
-	s += transform.e(2, 1).toFixed(10) + "," + transform.e(2, 2).toFixed(10) + "," + transform.e(2, 3) + "," + transform.e(2, 4).toFixed(10) + ",";
-	s += transform.e(3, 1).toFixed(10) + "," + transform.e(3, 2).toFixed(10) + "," + transform.e(3, 3) + "," + transform.e(3, 4).toFixed(10) + ",";
-	s += transform.e(4, 1).toFixed(10) + "," + transform.e(4, 2).toFixed(10) + "," + transform.e(4, 3) + "," + transform.e(4, 4).toFixed(10);
-	s += ")";		
-  
+	for (var i = 0; i < 4; i++) {
+		for (var j = 0; j < 4; j++) {
+			s += transform[i][j].toFixed() + ',';
+		}
+	}
+	
+	s = s.slice(0, s.length - 1);
+	s += ")";
 	return s;
 };
 
