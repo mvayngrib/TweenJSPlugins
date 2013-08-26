@@ -72,7 +72,7 @@ function toString(transform) {
 	var s = "matrix3d(";
 	for (var i = 0; i < 4; i++) {
 		for (var j = 0; j < 4; j++) {
-			s += transform[i][j].toFixed() + ',';
+			s += transform[i][j].toFixed(10) + ',';
 		}
 	}
 	
@@ -103,9 +103,14 @@ function toString(transform) {
 	}
 
 	function parseTransform(transformStr) {
-		var numStr = transformStr.match(/^matrix3d\((.*)\)/)[1],
-			nums = numStr.split(','),
+		// matrix(a, b, c, d, tx, ty) is a shorthand for matrix3d(a, b, 0, 0, c, d, 0, 0, 0, 0, 1, 0, tx, ty, 0, 1).
+		var matrixMatch = transformStr.match(/^matrix\((.*)\)/),
+			matrix3dMatch = !matrixMatch && transformStr.match(/^matrix3d\((.*)\)/),
+			nums = (matrixMatch || matrix3dMatch)[1].split(','),
 			matrix = [];
+		
+		if (matrixMatch)
+			nums = [[nums[0], nums[1], "0", "0",], [nums[2], nums[3], "0", "0"], ["0", "0", "1", "0"], [nums[4], nums[5], "0", "1"]];
 		
 		for (var i = 0; i < 4; i++) {
 			var row = matrix[i] = [];
@@ -165,7 +170,7 @@ function toString(transform) {
 		}
 		
 		value = multiply(startValues[prop], endValues[prop], ratio);
-		style[prefix.css + prop] = toString(value);
+		style[prefix.css + prop] = style[prefix.css] = toString(value);
 		return value;
 	}
 	
